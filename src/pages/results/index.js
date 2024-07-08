@@ -1,16 +1,31 @@
 import React, { useContext } from "react";
-import { datas } from "../../components/questions";
 import styled from "styled-components";
+
+import { datas } from "../../components/questions";
 import { Context } from "../../context/Store";
+import { useNavigate } from "react-router-dom";
 
 function Results() {
+  //fetching data from Store
   const {
     state: { user_data },
   } = useContext(Context);
   const answers = user_data.selectedAnswers;
+
+  // navigate for redirecting to home page
+  const navigate = useNavigate();
+
+  // when clicking play again clear localstorage and navigate to home
+  const clearData = () => {
+    window.localStorage.clear();
+    navigate("/");
+  };
   return (
     <>
-      <h1 style={{ textAlign: "center" }}>Correct Answers</h1>
+      <CoverTop>
+        <h1 style={{ textAlign: "center" }}>Correct Answers</h1>
+        <Button onClick={() => clearData()}>Play again</Button>
+      </CoverTop>
       <Container>
         <SubContainer>
           {datas.map((item, index) => (
@@ -34,9 +49,11 @@ function Results() {
       </Container>
       <Your>
         <h1 style={{ textAlign: "center" }}>Your Answers</h1>
-        {answers.map((item) => (
-          <div>{item} </div>
-        ))}
+        <Cover className="your">
+          {answers.map((item) => (
+            <h3>{item} </h3>
+          ))}
+        </Cover>
       </Your>
     </>
   );
@@ -50,7 +67,27 @@ const Container = styled.div`
   align-items: center;
 `;
 const SubContainer = styled.div``;
-const Cover = styled.div``;
+const CoverTop = styled.div`
+  position: relative;
+`;
+const Button = styled.div`
+  background-color: grey;
+  display: inline-block;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  right: 30px;
+  cursor: pointer;
+  position: absolute;
+`;
+const Cover = styled.div`
+  &.your {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+`;
 const Your = styled.div``;
 const CoverQ = styled.div`
   display: flex;

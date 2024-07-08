@@ -1,7 +1,5 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
-import { QuestionConfig } from "../../axiosConfig";
 import { datas } from "../../components/questions";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../context/Store";
@@ -10,12 +8,18 @@ function Quesionare() {
   const [currentQstn, setCurrentQuestion] = useState(0);
   const [isClick, setClick] = useState(true);
   const [isWrong, setWrong] = useState(false);
+  const [isCorrect, setCorrect] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState([]);
+
   const navigate = useNavigate();
+
+  //fetching data from Store
   const {
     dispatch,
     state: { user_data },
   } = useContext(Context);
+
+  // prevent click
   const preventClick = () => {
     setClick(false);
     dispatch({
@@ -26,8 +30,10 @@ function Quesionare() {
     });
   };
 
+  // next question
   const nextQuestion = () => {
     setClick(true);
+    setCorrect(false);
     setWrong(false);
     if (currentQstn < datas.length - 1) {
       setCurrentQuestion(currentQstn + 1);
@@ -35,14 +41,9 @@ function Quesionare() {
       navigate("/results");
     }
   };
-
-  const prevQuestion = () => {
-    if (currentQstn > 0) {
-      setCurrentQuestion(currentQstn - 1);
-    }
-  };
+  //assigned array to object from current index
   const { question, correct_answer, incorrect_answers } = datas[currentQstn];
-  console.log(selectedAnswer);
+
   return (
     <Container>
       <FormContainer>
@@ -67,8 +68,9 @@ function Quesionare() {
             onClick={() => {
               setSelectedAnswer([...selectedAnswer, correct_answer]);
               preventClick();
+              setCorrect(true);
             }}
-            className={selectedAnswer == correct_answer && "correct"}
+            className={isCorrect && "correct"}
             type={isClick}
           >
             {correct_answer}
